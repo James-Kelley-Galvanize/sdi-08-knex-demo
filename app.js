@@ -1,6 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
-const { getAllMovies } = require("./database/controllers");
+const { getAllMovies, getMovieById } = require("./database/controllers");
 
 const app = express();
 
@@ -16,6 +16,14 @@ app.get("/", (req, res) => {
 app.get("/movies", (req, res) => {
   // db.query("SELECT * FROM movies;"); // how you do it with PG
   getAllMovies()
+    .then((data) => res.send(data))
+    .catch((err) =>
+      res.status(404).json({ message: "No movies found matching this search!" })
+    );
+});
+app.get("/movies/:id", (req, res) => {
+  let { id } = req.params;
+  getMovieById(id)
     .then((data) => res.send(data))
     .catch((err) =>
       res.status(404).json({ message: "No movie found matching this search!" })
